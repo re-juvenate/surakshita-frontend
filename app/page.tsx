@@ -1,4 +1,3 @@
-// import buttonVariants from "@/components/ui/button"
 import Footer from "@/components/Footer";
 import FormComponent from "@/components/Form";
 import Modal from "@/components/Modal";
@@ -9,10 +8,10 @@ import { Button } from "@/components/ui/button"
 export default function Home() {
   return (
     <div>
-      <Navbar/>
-      {/* <FormComponent/> */}
+      <FormComponent/>
       {/* <Modal/> */}
       {/* <Signin/> */}
+      <Footer/>
     </div>
   );
 }

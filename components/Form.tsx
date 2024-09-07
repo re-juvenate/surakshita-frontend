@@ -44,6 +44,7 @@ export default function FormComponent() {
   }
 
   return (
+    <div className="p-6">
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
@@ -129,5 +130,6 @@ export default function FormComponent() {
         <Button type="submit">Submit</Button>
       </form>
     </Form>
+    </div>
   )
 }
