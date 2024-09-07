@@ -17,28 +17,110 @@ import {
 import { Input } from "@/components/ui/input"
 
 const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  firstname: z.string().min(2, {
+    message: "First name must be at least 2 characters.",
+  }),
+  lastname: z.string().min(2, {
+    message: "Last name must be at least 2 characters.",
+  }),
+  age: z.number().min(1, {
+    message: "Age must be a positive number.",
+  }),
+  aadhaarCard: z.instanceof(File).refine(file => file.size > 0, {
+    message: "Aadhaar card file is required.",
+  }),
+  panCard: z.instanceof(File).refine(file => file.size > 0, {
+    message: "PAN card file is required.",
   }),
 })
 
-export function Form() {
-  // ...
+export default function FormComponent() {
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+  })
+
+  const onSubmit = (data: any) => {
+    console.log(data)
+  }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="username"
+          name="firstname"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>First Name</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="First Name" {...field} />
               </FormControl>
               <FormDescription>
-                This is your public display name.
+                Enter your first name.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="lastname"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Last Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Last Name" {...field} />
+              </FormControl>
+              <FormDescription>
+                Enter your last name.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="age"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Age</FormLabel>
+              <FormControl>
+                <Input type="number" placeholder="Age" {...field} />
+              </FormControl>
+              <FormDescription>
+                Enter your age.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="aadhaarCard"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Aadhaar Card</FormLabel>
+              <FormControl>
+                <Input type="file" {...field} />
+              </FormControl>
+              <FormDescription>
+                Upload your Aadhaar card.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="panCard"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>PAN Card</FormLabel>
+              <FormControl>
+                <Input type="file" {...field} />
+              </FormControl>
+              <FormDescription>
+                Upload your PAN card.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -49,4 +131,3 @@ export function Form() {
     </Form>
   )
 }
-  
