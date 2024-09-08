@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -50,36 +50,42 @@ export default function FormComponent() {
     },
   })
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+  const onSubmit = (data:any) => {
     console.log(data)
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, documentType: 'aadhaar' | 'pan') => {
-    const file = e.target.files?.[0]
-    if (file) {
-      if (documentType === 'aadhaar') {
-        setAadhaarUploaded(true)
-        form.setValue('aadhaarCard', file.name)
-      } else {
-        setPanUploaded(true)
-        form.setValue('panCard', file.name)
-      }
+  const handleSurakshitaRedirect = (documentType: "aadhaar" | "pan") => {
+    const surakshitaWindow = window.open('http://localhost:3000', 'SurakshitaUpload', 'width=600,height=400')
+    
+    if (surakshitaWindow) {
+      setTimeout(() => {
+        surakshitaWindow.postMessage({ type: documentType }, 'http://localhost:3000')
+      }, 1000);  // Delay of 1 second
     }
   }
 
-  const handleSurakshitaRedirect = (documentType: 'aadhaar' | 'pan') => {
-    // Implement the redirection to Surakshita platform here
-    // For demonstration, we'll use a timeout to simulate the process
-    setTimeout(() => {
-      if (documentType === 'aadhaar') {
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.origin !== 'http://localhost:3000') return
+
+      console.log("Received message:", event.data);  // Debugging log
+
+      const { type, fileName } = event.data
+      if (type === 'aadhaar') {
+        form.setValue('aadhaarCard', fileName)
         setAadhaarUploaded(true)
-        form.setValue('aadhaarCard', 'aadhaar_file.pdf')
-      } else {
+      } else if (type === 'pan') {
+        form.setValue('panCard', fileName)
         setPanUploaded(true)
-        form.setValue('panCard', 'pan_file.pdf')
       }
-    }, 2000)
-  }
+
+      // Don't close the window immediately
+      // event.source.close()
+    }
+
+    window.addEventListener('message', handleMessage)
+    return () => window.removeEventListener('message', handleMessage)
+  }, [form])
 
   return (
     <div className="p-16">
@@ -141,15 +147,15 @@ export default function FormComponent() {
                 <FormLabel>Aadhaar Card</FormLabel>
                 <FormControl>
                   <div>
-                    {aadhaarUploaded && <p className="mt-2 text-sm text-green-600">File uploaded: {field.value}</p>}
                     <Button type="button" onClick={() => handleSurakshitaRedirect('aadhaar')}>
                       Upload using Surakshita
                     </Button>
+                    {aadhaarUploaded && <p className="mt-2 text-sm text-green-600">File uploaded: {field.value}</p>}
                   </div>
                 </FormControl>
-                <FormDescription>
+                {!aadhaarUploaded&&<FormDescription>
                   Upload your Aadhaar card using Surakshita.
-                </FormDescription>
+                </FormDescription>}
                 <FormMessage />
               </FormItem>
             )}
@@ -162,15 +168,15 @@ export default function FormComponent() {
                 <FormLabel>PAN Card</FormLabel>
                 <FormControl>
                   <div>
-                    {panUploaded && <p className="mt-2 text-sm text-green-600">File uploaded: {field.value}</p>}
                     <Button type="button" onClick={() => handleSurakshitaRedirect('pan')}>
                       Upload using Surakshita
                     </Button>
+                    {panUploaded && <p className="mt-2 text-sm text-green-600">File uploaded: {field.value}</p>}
                   </div>
                 </FormControl>
-                <FormDescription>
+                {!panUploaded&&<FormDescription>
                   Upload your PAN card using Surakshita.
-                </FormDescription>
+                </FormDescription>}
                 <FormMessage />
               </FormItem>
             )}

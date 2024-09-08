@@ -1,58 +1,79 @@
 "use client"
 
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-
-
-import { useState } from "react";
 import { Input } from "./ui/input";
-import ImagePreview from "./ImagePreview";
+import { Button } from "./ui/button";
 
 export default function FilePreview() {
   const [uploaded, setUploaded] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined);
+  const [uploadStatus, setUploadStatus] = useState<string>("");
+  const [documentType, setDocumentType] = useState<string>("");
 
-  const handleFileChange = (event: any) => {
-    const selectedFile = event.target.files[0];
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.origin !== "http://localhost:3000") return;
+      
+      console.log("Received message:", event.data);  // Debugging log
+
+      const { type } = event.data;
+      setDocumentType(type);
+      setUploadStatus(`Received request to upload ${type} document`);
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
       setFileUrl(URL.createObjectURL(selectedFile));
       setUploaded(true);
-      uploadFile(selectedFile);
+      setUploadStatus("File uploaded successfully");
     }
   };
 
-  const uploadFile = async (file: File) => {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const response = await fetch('https://your-api-endpoint.com/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.ok) {
-        console.log('File uploaded successfully');
-      } else {
-        console.error('File upload failed');
-      }
-    } catch (error) {
-      console.error('Error uploading file:', error);
+  const handleSubmit = () => {
+    if (file && window.opener) {
+      window.opener.postMessage(
+        { type: documentType, fileName: file.name },
+        "http://localhost:3000/company"
+      );
+      setUploadStatus("File information sent to main page");
+      window.close();
     }
   };
 
   return (
     <>
       <div>
-        {!uploaded && <Input type="file" onChange={handleFileChange} />}
+        {!uploaded &&
+          <div className="p-20">
+            <Card>
+              <CardHeader>
+                <CardTitle>Upload the {documentType} file</CardTitle>
+                <CardDescription>Choose the PII to morph/blackout</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Input type="file" onChange={handleFileChange} accept="image/*,application/pdf" />
+                <p>{uploadStatus}</p>
+              </CardContent>
+            </Card>
+          </div>
+        }
         {uploaded &&
           <div className="p-20">
             <Card>
@@ -69,16 +90,14 @@ export default function FilePreview() {
                     {file && file.type === 'application/pdf' && (
                       <embed src={fileUrl} type="application/pdf" width="600" height="400" />
                     )}
-                    {/* Add more file type handling as needed */}
                   </div>
                   <div>
                     <p>List of PII detected</p>
+                    <p>{uploadStatus}</p>
+                    <Button onClick={handleSubmit}>Submit File</Button>
                   </div>
                 </div>
               </CardContent>
-              {/* <CardFooter>
-              <p>Card Footer</p>
-            </CardFooter> */}
             </Card>
           </div>
         }

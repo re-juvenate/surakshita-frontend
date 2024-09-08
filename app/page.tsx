@@ -1,3 +1,4 @@
+import FilePreview from "@/components/FilePreview";
 import { Footer } from "@/components/Footer";
 import FormComponent from "@/components/Form";
 import { Hero3 } from "@/components/Hero";
@@ -11,6 +12,7 @@ export default function Home() {
     <div>
       <Navbar/>
       <Hero3/>
+      <FilePreview/>
       <Footer />
     </div>
   );

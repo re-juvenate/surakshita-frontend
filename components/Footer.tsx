@@ -42,8 +42,9 @@ export const Footer = () => {
   ];
 
   return (
-    <div className="w-full py-20 lg:py-40 bg-foreground text-background">
+    <div className="w-full pb-3 bg-foreground text-background">
       <div className="container mx-auto">
+        <hr className="border-t border-white w-full mb-2" />
         <div className="grid lg:grid-cols-2 gap-10 items-center">
           <div className="flex gap-8 flex-col items-start">
             <div className="flex gap-2 flex-col">
@@ -56,9 +57,8 @@ export const Footer = () => {
             </div>
             <div className="flex gap-20 flex-row">
               <div className="flex flex-col text-sm max-w-lg leading-relaxed tracking-tight text-background/75 text-left">
-                <p>1 Tailwind Way</p>
-                <p>Menlo Park</p>
-                <p>CA 94025</p>
+                <p>VIT Chennai</p>
+                <p>Tamil Nadu 600127</p>
               </div>
               <div className="flex flex-col text-sm max-w-lg leading-relaxed tracking-tight text-background/75 text-left">
                 <Link href="/">Terms of service</Link>

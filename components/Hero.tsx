@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 export const Hero3 = () => (
-    <div className="w-full  py-20 lg:py-40">
+    <div className="w-full pt-10">
         <div className="container mx-auto">
             <div className="grid grid-cols-1 gap-8 items-center lg:grid-cols-2">
                 <div className="flex gap-4 flex-col">
@@ -22,9 +22,9 @@ export const Hero3 = () => (
                         </p>
                     </div>
                     <div className="flex flex-row gap-4">
-                        <Button size="lg" className="gap-4" variant="outline">
+                        {/* <Button size="lg" className="gap-4" variant="outline">
                             Jump on a call <PhoneCall className="w-4 h-4" />
-                        </Button>
+                        </Button> */}
                         <Button size="lg" className="gap-4">
                             Sign up here <MoveRight className="w-4 h-4" />
                         </Button>
