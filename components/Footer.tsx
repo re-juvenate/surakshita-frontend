@@ -23,10 +23,6 @@ export const Footer = () => {
           title: "Dashboards",
           href: "/dashboards",
         },
-        {
-          title: "Recordings",
-          href: "/recordings",
-        },
       ],
     },
     {
@@ -36,14 +32,6 @@ export const Footer = () => {
         {
           title: "About us",
           href: "/about",
-        },
-        {
-          title: "Fundraising",
-          href: "/fundraising",
-        },
-        {
-          title: "Investors",
-          href: "/investors",
         },
         {
           title: "Contact us",
@@ -60,7 +48,7 @@ export const Footer = () => {
           <div className="flex gap-8 flex-col items-start">
             <div className="flex gap-2 flex-col">
               <h2 className="text-3xl md:text-5xl tracking-tighter max-w-xl font-regular text-left">
-                TWBlocks™
+                SURAKSHITA™
               </h2>
               <p className="text-lg max-w-lg leading-relaxed tracking-tight text-background/75 text-left">
                 Managing a small business today is already tough.

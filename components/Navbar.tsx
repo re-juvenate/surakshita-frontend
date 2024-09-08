@@ -121,7 +121,7 @@ export default function Navbar(){
           </NavigationMenu>
         </div>
         <div className="flex lg:justify-center">
-          <p className="font-semibold">TWBlocks</p>
+          <p className="font-semibold">SURAKSHITA</p>
         </div>
         <div className="flex justify-end w-full gap-4">
           <Button variant="ghost" className="hidden md:inline">
