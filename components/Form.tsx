@@ -54,6 +54,19 @@ export default function FormComponent() {
     console.log(data)
   }
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, documentType: 'aadhaar' | 'pan') => {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (documentType === 'aadhaar') {
+        setAadhaarUploaded(true)
+        form.setValue('aadhaarCard', file.name)
+      } else {
+        setPanUploaded(true)
+        form.setValue('panCard', file.name)
+      }
+    }
+  }
+
   const handleSurakshitaRedirect = (documentType: 'aadhaar' | 'pan') => {
     // Implement the redirection to Surakshita platform here
     // For demonstration, we'll use a timeout to simulate the process
@@ -128,10 +141,11 @@ export default function FormComponent() {
                 <FormLabel>Aadhaar Card</FormLabel>
                 <FormControl>
                   <div>
+                    <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'aadhaar')} />
+                    {aadhaarUploaded && <p className="mt-2 text-sm text-green-600">File uploaded: {field.value}</p>}
                     <Button type="button" onClick={() => handleSurakshitaRedirect('aadhaar')}>
                       Upload using Surakshita
                     </Button>
-                    {aadhaarUploaded && <p className="mt-2 text-sm text-green-600">File uploaded: {field.value}</p>}
                   </div>
                 </FormControl>
                 <FormDescription>
@@ -149,10 +163,11 @@ export default function FormComponent() {
                 <FormLabel>PAN Card</FormLabel>
                 <FormControl>
                   <div>
+                    <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'pan')} />
+                    {panUploaded && <p className="mt-2 text-sm text-green-600">File uploaded: {field.value}</p>}
                     <Button type="button" onClick={() => handleSurakshitaRedirect('pan')}>
                       Upload using Surakshita
                     </Button>
-                    {panUploaded && <p className="mt-2 text-sm text-green-600">File uploaded: {field.value}</p>}
                   </div>
                 </FormControl>
                 <FormDescription>
