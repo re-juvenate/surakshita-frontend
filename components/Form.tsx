@@ -141,7 +141,6 @@ export default function FormComponent() {
                 <FormLabel>Aadhaar Card</FormLabel>
                 <FormControl>
                   <div>
-                    <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'aadhaar')} />
                     {aadhaarUploaded && <p className="mt-2 text-sm text-green-600">File uploaded: {field.value}</p>}
                     <Button type="button" onClick={() => handleSurakshitaRedirect('aadhaar')}>
                       Upload using Surakshita
@@ -163,7 +162,6 @@ export default function FormComponent() {
                 <FormLabel>PAN Card</FormLabel>
                 <FormControl>
                   <div>
-                    <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'pan')} />
                     {panUploaded && <p className="mt-2 text-sm text-green-600">File uploaded: {field.value}</p>}
                     <Button type="button" onClick={() => handleSurakshitaRedirect('pan')}>
                       Upload using Surakshita
