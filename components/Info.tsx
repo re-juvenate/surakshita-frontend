@@ -1,8 +1,9 @@
 'use client'; // Ensure this is a client-side component
 
-import { useRef, useLayoutEffect } from 'react'; // UseLayoutEffect to avoid SSR issues
+import { useRef, useLayoutEffect, useEffect } from 'react'; // UseLayoutEffect to avoid SSR issues
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger'; // Import ScrollTrigger
+import SplitType from 'split-type'; // Import SplitType
 
 gsap.registerPlugin(ScrollTrigger); // Register ScrollTrigger
 
@@ -57,6 +58,23 @@ export default function Info() {
         });
     }, []);
 
+    useEffect(() => {
+        // Split the text into lines, words, and characters
+        const typeSplit = new SplitType('[animate]', {
+            types: 'lines, words, chars',
+            tagName: 'span'
+        });
+
+        // Animate the words
+        gsap.from('[animate] .word', {
+            y: '100%',
+            opacity: 1,
+            duration: 0.4,
+            ease: 'bounce.out',
+            stagger: 0.1,
+        });
+    }, []);
+
     return (
         <div className="w-full pb-5 px-16 bg-foreground text-background"> {/* Increased horizontal padding */}
             <div className="container mx-auto">
@@ -95,7 +113,7 @@ export default function Info() {
                         className="info-container flex mb-8">
                         <div className="w-1/2 order-1">
                             <h1 className="text-4xl font-nyxerin text-customRed font-bold mb-4">{section.title}</h1>
-                            <p className="mb-8">{section.description}</p>
+                            <p className="mb-8" animate>{section.description}</p>
                         </div>
                         <div className="w-1/2 order-last relative">
                             <img
