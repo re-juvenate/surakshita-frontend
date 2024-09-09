@@ -98,6 +98,7 @@ export default function FilePreview() {
           "http://localhost:3000/company"
         );
         setUploadStatus("File information sent to main page");
+        window.close();
       }
     }
   };
