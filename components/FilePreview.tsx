@@ -26,14 +26,19 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
+interface PIIItem {
+  id: string;
+  category: string;
+}
+
 export default function FilePreview() {
   const [uploaded, setUploaded] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined);
   const [uploadStatus, setUploadStatus] = useState<string>("");
   const [documentType, setDocumentType] = useState<string>("");
-  const [PII, setPII] = useState<any[]>([]);
-  
+  const [PII, setPII] = useState<PIIItem[]>([]);
+
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.origin !== "http://localhost:3000") return;
@@ -77,7 +82,10 @@ export default function FilePreview() {
         if (response.ok) {
           const piiResponse = await response.json();
           setUploadStatus("File uploaded to backend successfully");
-          setPII(piiResponse.pii);
+          setPII(piiResponse.pii.map((item: any) => ({
+            id: item.id,
+            category: item.pii[0].category
+          })));
           setUploadStatus("Choose PII's to be morphed");
         }
       } catch (error) {
@@ -90,7 +98,6 @@ export default function FilePreview() {
           "http://localhost:3000/company"
         );
         setUploadStatus("File information sent to main page");
-        window.close();
       }
     }
   };
@@ -111,12 +118,15 @@ export default function FilePreview() {
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     if (values.items.length > 0) {
       try {
+        const selectedCategories = values.items;
+        console.log("Selected PII categories:", selectedCategories);
+
         const response = await fetch('http://localhost:3000/upload', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ selectedPII: values.items }),
+          body: JSON.stringify({ selectedPII: selectedCategories }),
         });
 
         if (response.ok) {
@@ -177,7 +187,7 @@ export default function FilePreview() {
 
                   </div>
                   <div>
-                    {PII.length > 0 && <Form {...form}>
+                    {<Form {...form}>
                       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                         <FormField
                           control={form.control}
@@ -203,20 +213,20 @@ export default function FilePreview() {
                                       >
                                         <FormControl>
                                           <Checkbox
-                                            checked={field.value?.includes(item.id)}
+                                            checked={field.value?.includes(item.category)}
                                             onCheckedChange={(checked) => {
                                               return checked
-                                                ? field.onChange([...field.value, item.id])
+                                                ? field.onChange([...field.value, item.category])
                                                 : field.onChange(
                                                   field.value?.filter(
-                                                    (value) => value !== item.id
+                                                    (value) => value !== item.category
                                                   )
                                                 )
                                             }}
                                           />
                                         </FormControl>
                                         <FormLabel className="text-sm font-normal">
-                                          {item.pii[0].category}
+                                          {item.category}
                                         </FormLabel>
                                       </FormItem>
                                     )
