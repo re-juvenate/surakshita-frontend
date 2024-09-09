@@ -12,13 +12,12 @@ export const Hero3 = () => (
                     </div>
                     <div className="flex gap-4 flex-col">
                         <h1 className="text-5xl md:text-7xl max-w-lg tracking-tighter text-left font-regular">
-                            This is the start of something!
+                        Surakshita
                         </h1>
+                        <h2 className="text-l md:text-3xl max-w-lg tracking-tighter text-left font-regular">Your Digital Guardian</h2>
                         <p className="text-xl leading-relaxed tracking-tight text-muted-foreground max-w-md text-left">
-                            Managing a small business today is already tough. Avoid further
-                            complications by ditching outdated, tedious trade methods. Our
-                            goal is to streamline SMB trade, making it easier and faster than
-                            ever.
+                        Navigating the digital world with your personal information at stake is risky business. Say goodbye to constant worry about your sensitive data being exposed. Surakshita aims to revolutionize digital privacy, making personal information protection effortless and robust. Our smart AI detects and shields your data, so you can engage online with confidence.
+
                         </p>
                     </div>
                     <div className="flex flex-row gap-4">
