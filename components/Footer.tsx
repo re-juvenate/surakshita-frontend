@@ -52,7 +52,7 @@ export const Footer = () => {
                 SURAKSHITA™
               </h2>
               <p className="text-lg max-w-lg leading-relaxed tracking-tight text-background/75 text-left">
-                Managing a small business today is already tough.
+                Your Data, Your Control—Connecting Companies with Confidence.
               </p>
             </div>
             <div className="flex gap-20 flex-row">
