@@ -11,17 +11,35 @@ import {
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+
+// import { toast } from "@/components/hooks/use-toast"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+
 export default function FilePreview() {
   const [uploaded, setUploaded] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined);
   const [uploadStatus, setUploadStatus] = useState<string>("");
   const [documentType, setDocumentType] = useState<string>("");
+  const [PII, setPII] = useState(null);
+  const [SelectedPII, setSelectedPII] = useState(null);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.origin !== "http://localhost:3000") return;
-      
+
       console.log("Received message:", event.data);  // Debugging log
 
       const { type } = event.data;
@@ -46,16 +64,79 @@ export default function FilePreview() {
     }
   };
 
-  const handleSubmit = () => {
-    if (file && window.opener) {
-      window.opener.postMessage(
-        { type: documentType, fileName: file.name },
-        "http://localhost:3000/company"
-      );
-      setUploadStatus("File information sent to main page");
-      window.close();
+  const handleSubmit = async () => {
+
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('documentType', documentType);
+
+      try {
+        const response = await fetch('http://localhost:3000/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          const PiiResoponse = await response.json();
+          setUploadStatus("File uploaded to backend successfully");
+          setPII(PiiResoponse.pii);
+          setUploadStatus("Choose PII's to morphed");
+
+
+        }
+      } catch (error) {
+        setUploadStatus("Error uploading file to backend");
+      }
+
+
+      if (file && window.opener) {
+        window.opener.postMessage(
+          { type: documentType, fileName: file.name },
+          "http://localhost:3000/company"
+        );
+        setUploadStatus("File information sent to main page");
+        window.close();
+      }
+    };
+  }
+
+  const FormSchema = z.object({
+    items: z.array(z.string()).refine((value) => value.some((item) => item), {
+      message: "You have to select at least one item.",
+    }),
+  })
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema)
+  })
+
+  const onSubmit = async () => {
+    if (PII) {
+      try {
+        const response = await fetch('http://localhost:3000/upload', {
+          method: 'POST',
+          body: SelectedPII,
+        });
+
+        if (response.ok) {
+          const FileResponse = await response.json();
+          setUploadStatus("PII uploaded to backend successfully");
+          setFile(FileResponse.file);
+          setUploadStatus("Morphed File");
+          setTimeout(() => {
+            window.close();
+          }, 2000);
+        }
+
+
+      } catch (error) {
+        setUploadStatus("Error uploading PII to backend");
+      }
+    } else {
+      setUploadStatus("Failed to upload file to backend");
     }
-  };
+  }
 
   return (
     <>
@@ -90,11 +171,64 @@ export default function FilePreview() {
                     {file && file.type === 'application/pdf' && (
                       <embed src={fileUrl} type="application/pdf" width="600" height="400" />
                     )}
-                  </div>
-                  <div>
-                    <p>List of PII detected</p>
+
                     <p>{uploadStatus}</p>
                     <Button onClick={handleSubmit}>Submit File</Button>
+                  </div>
+                  <div>
+                    {PII && <Form {...form}>
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                        <FormField
+                          control={form.control}
+                          name="items"
+                          render={() => (
+                            <FormItem>
+                              <div className="mb-4">
+                                <FormLabel className="text-base">List of PII detected</FormLabel>
+                                <FormDescription>
+                                  Select the Pii's you want to morph.
+                                </FormDescription>
+                              </div>
+                              {PII.map((item) => (
+                                <FormField
+                                  key={item.pii[0].category}
+                                  control={form.control}
+                                  name="items"
+                                  render={({ field }) => {
+                                    return (
+                                      <FormItem
+                                        key={item.id}
+                                        className="flex flex-row items-start space-x-3 space-y-0"
+                                      >
+                                        <FormControl>
+                                          <Checkbox
+                                            checked={field.value?.includes(item.id)}
+                                            onCheckedChange={(checked) => {
+                                              return checked
+                                                ? field.onChange([...field.value, item.id])
+                                                : field.onChange(
+                                                  field.value?.filter(
+                                                    (value) => value !== item.id
+                                                  )
+                                                )
+                                            }}
+                                          />
+                                        </FormControl>
+                                        <FormLabel className="text-sm font-normal">
+                                          {item.pii[0].category}
+                                        </FormLabel>
+                                      </FormItem>
+                                    )
+                                  }}
+                                />
+                              ))}
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button type="submit">Submit</Button>
+                      </form>
+                    </Form>}
                   </div>
                 </div>
               </CardContent>
