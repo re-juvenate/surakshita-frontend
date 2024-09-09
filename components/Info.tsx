@@ -8,11 +8,14 @@ gsap.registerPlugin(ScrollTrigger); // Register ScrollTrigger
 
 export default function Info() {
     const sectionRefs = useRef<HTMLDivElement[]>([]);
+    const imageRefs = useRef<HTMLImageElement[]>([]); // Store image references for animation
 
     useLayoutEffect(() => {
-        sectionRefs.current.forEach((section) => {
-            if (section) {
-                // GSAP animation triggered on scroll
+        sectionRefs.current.forEach((section, index) => {
+            const image = imageRefs.current[index]; // Get corresponding image for the section
+
+            if (section && image) {
+                // GSAP animation for text
                 gsap.fromTo(
                     section,
                     { opacity: 0, y: 50 },
@@ -28,11 +31,32 @@ export default function Info() {
                         },
                     }
                 );
+
+                // GSAP animation for image (rotate and slide from right)
+                gsap.fromTo(
+                    image,{
+                    opacity: 0,
+                    x: 200,
+                    rotate: 45,
+                    scrub: 1, },
+                    {
+                        opacity: 1,
+                        x: 0,
+                        rotate: 0, // Reset rotation
+                        duration: 1,
+                        ease: 'power3.inOut',
+                        scrollTrigger: {
+                            trigger: section,
+                            start: 'top 80%',
+                            toggleActions: 'play none none reverse',
+                        },
+                    }
+                );
             }
         });
     }, []);
 
-        return (
+    return (
         <div className="w-full pb-5 px-16 bg-foreground text-background"> {/* Increased horizontal padding */}
             <div className="container mx-auto">
                 {[
@@ -73,7 +97,14 @@ export default function Info() {
                             <p className="mb-8">{section.description}</p>
                         </div>
                         <div className="w-1/2 order-last">
-                            <img src={section.image} alt="Product Image" className="product-image" />
+                            <img
+                                src={section.image}
+                                alt="Product Image"
+                                ref={(el: HTMLImageElement | null) => {
+                                    imageRefs.current[index] = el!;
+                                }} // Assign ref to the image
+                                className="product-image"
+                            />
                         </div>
                     </div>
                 ))}
