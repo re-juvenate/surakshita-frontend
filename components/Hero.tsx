@@ -11,8 +11,8 @@ export const Hero3 = () => (
                         <Badge variant="outline">We&apos;re live!</Badge>
                     </div>
                     <div className="flex gap-4 flex-col">
-                        <h1 className="text-5xl md:text-7xl max-w-lg tracking-tighter text-left font-regular">
-                        Surakshita
+                        <h1 className="text-customRed font-nyxerin text-3xl md:text-5xl max-w-lg tracking-tighter text-left font-regular">
+                          Surakshita
                         </h1>
                         <h2 className="text-l md:text-3xl max-w-lg tracking-tighter text-left font-regular">Your Digital Guardian</h2>
                         <p className="text-xl leading-relaxed tracking-tight text-muted-foreground max-w-md text-left">

@@ -12,6 +12,7 @@ import {
 import { Menu, MoveRight, X } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Navbar(){
   const navigationItems = [
@@ -121,7 +122,10 @@ export default function Navbar(){
           </NavigationMenu>
         </div>
         <div className="flex lg:justify-center">
-          <p className="font-semibold">SURAKSHITA</p>
+          <img src="" alt="" />
+          {/* <img src="/../app/media/logo.jpg" /> */}
+          <Image src="/media/logo.jpg" alt="SURAKSHITA LOGO" width={500} height={500} className="mix-blend-screen" />
+          {/* <p className="font-semibold">SURAKSHITA</p> */}
         </div>
         <div className="flex justify-end w-full gap-4">
           <Button variant="ghost" className="hidden md:inline">
