@@ -34,11 +34,12 @@ export default function Info() {
 
                 // GSAP animation for image (rotate and slide from right)
                 gsap.fromTo(
-                    image,{
+                    image, {
                     opacity: 0,
                     x: 200,
                     rotate: 45,
-                    scrub: 1, },
+                    scrub: 1,
+                },
                     {
                         opacity: 1,
                         x: 0,
@@ -96,7 +97,7 @@ export default function Info() {
                             <h1 className="text-4xl font-nyxerin text-customRed font-bold mb-4">{section.title}</h1>
                             <p className="mb-8">{section.description}</p>
                         </div>
-                        <div className="w-1/2 order-last">
+                        <div className="w-1/2 order-last relative">
                             <img
                                 src={section.image}
                                 alt="Product Image"
@@ -105,6 +106,7 @@ export default function Info() {
                                 }} // Assign ref to the image
                                 className="product-image"
                             />
+                            <div className="overlay absolute inset-0 bg-green-glass-overlay opacity-0 transition-opacity duration-300"></div>
                         </div>
                     </div>
                 ))}

@@ -86,6 +86,15 @@ body {
   }
 }
 
+.bg-green-glass-overlay {
+  background-image: url('/media/green_glass_overlay.png');
+  background-size: cover;
+  mix-blend-mode: color-dodge;
+}
+.product-image:hover + .overlay {
+  opacity: 1;
+}
+
 @layer base {
   * {
     @apply border-border;

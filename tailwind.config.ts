@@ -12,7 +12,9 @@ const config: Config = {
 		fontFamily: {
 			nyxerin: ['var(--font-nyxerin)', 'sans-serif'],
 		},
-	
+		backgroundImage: {
+			'green-glass': "url('/path/to/your/green-glass.png')",
+		},
   		colors: {
 			customRed: '#ff3333',
   			background: 'hsl(var(--background))',
