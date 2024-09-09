@@ -1,6 +1,7 @@
 import { MoveRight, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 
 export const Hero3 = () => (
     <div className="w-full px-24 pt-10">
@@ -29,7 +30,8 @@ export const Hero3 = () => (
                         </Button>
                     </div>
                 </div>
-                <div className="bg-muted rounded-md aspect-square"></div>
+                {/* <div className="bg-muted rounded-md aspect-square"></div> */}
+                <Image src="/media/hero_image.png" alt="hero image" width={450} height={450} className="bg-muted rounded-md aspect-square"/>
             </div>
         </div>
     </div>
