@@ -6,6 +6,7 @@ import Modal from "@/components/Modal";
 import Navbar from "@/components/Navbar";
 import Signin from "@/components/Signin";
 import { Button } from "@/components/ui/button"
+import Info from "@/components/Info";
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       <Navbar/>
       <Hero3/>
       <FilePreview/>
+      <Info/>
       <Footer />
     </div>
   );
