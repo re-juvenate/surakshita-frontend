@@ -15,7 +15,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-// import { toast } from "@/components/hooks/use-toast"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
@@ -33,9 +32,8 @@ export default function FilePreview() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined);
   const [uploadStatus, setUploadStatus] = useState<string>("");
   const [documentType, setDocumentType] = useState<string>("");
-  const [PII, setPII] = useState(null);
-  const [SelectedPII, setSelectedPII] = useState(null);
-
+  const [PII, setPII] = useState<any[]>([]);
+  
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.origin !== "http://localhost:3000") return;
@@ -65,7 +63,6 @@ export default function FilePreview() {
   };
 
   const handleSubmit = async () => {
-
     if (file) {
       const formData = new FormData();
       formData.append('file', file);
@@ -78,19 +75,16 @@ export default function FilePreview() {
         });
 
         if (response.ok) {
-          const PiiResoponse = await response.json();
+          const piiResponse = await response.json();
           setUploadStatus("File uploaded to backend successfully");
-          setPII(PiiResoponse.pii);
-          setUploadStatus("Choose PII's to morphed");
-
-
+          setPII(piiResponse.pii);
+          setUploadStatus("Choose PII's to be morphed");
         }
       } catch (error) {
         setUploadStatus("Error uploading file to backend");
       }
 
-
-      if (file && window.opener) {
+      if (window.opener) {
         window.opener.postMessage(
           { type: documentType, fileName: file.name },
           "http://localhost:3000/company"
@@ -98,8 +92,8 @@ export default function FilePreview() {
         setUploadStatus("File information sent to main page");
         window.close();
       }
-    };
-  }
+    }
+  };
 
   const FormSchema = z.object({
     items: z.array(z.string()).refine((value) => value.some((item) => item), {
@@ -108,33 +102,37 @@ export default function FilePreview() {
   })
 
   const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema)
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      items: [],
+    },
   })
 
-  const onSubmit = async () => {
-    if (PII) {
+  const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+    if (values.items.length > 0) {
       try {
         const response = await fetch('http://localhost:3000/upload', {
           method: 'POST',
-          body: SelectedPII,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ selectedPII: values.items }),
         });
 
         if (response.ok) {
-          const FileResponse = await response.json();
+          const fileResponse = await response.json();
           setUploadStatus("PII uploaded to backend successfully");
-          setFile(FileResponse.file);
+          setFile(fileResponse.file);
           setUploadStatus("Morphed File");
           setTimeout(() => {
             window.close();
           }, 2000);
         }
-
-
       } catch (error) {
         setUploadStatus("Error uploading PII to backend");
       }
     } else {
-      setUploadStatus("Failed to upload file to backend");
+      setUploadStatus("Please select at least one PII to morph");
     }
   }
 
@@ -173,10 +171,13 @@ export default function FilePreview() {
                     )}
 
                     <p>{uploadStatus}</p>
-                    <Button onClick={handleSubmit}>Submit File</Button>
+                    {uploadStatus !== "File uploaded to backend successfully" && (
+                      <Button onClick={handleSubmit}>Submit File</Button>
+                    )}
+
                   </div>
                   <div>
-                    {PII && <Form {...form}>
+                    {PII.length > 0 && <Form {...form}>
                       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                         <FormField
                           control={form.control}
@@ -186,12 +187,12 @@ export default function FilePreview() {
                               <div className="mb-4">
                                 <FormLabel className="text-base">List of PII detected</FormLabel>
                                 <FormDescription>
-                                  Select the Pii's you want to morph.
+                                  Select the PII you want to morph.
                                 </FormDescription>
                               </div>
                               {PII.map((item) => (
                                 <FormField
-                                  key={item.pii[0].category}
+                                  key={item.id}
                                   control={form.control}
                                   name="items"
                                   render={({ field }) => {
